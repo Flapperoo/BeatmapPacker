@@ -24,8 +24,8 @@ This will download beatmap packs from 1 - 1348.
 
 ## Warning
 
-**Very slow!** osu! file servers do not like downloading multiple files at the same time, highly dependent on your machine's internet speed.
+**Very slow!**
 
-The packs are 200MB each, be wary of how much you're downloading.
+osu! file servers do not like downloading multiple files at the same time, highly dependent on your machine's internet speed. The packs are 200MB each, be wary of how much you're downloading.
 
 Prone to breakage as pack links are inconsistent/can change anytime, I'll try to add edge-cases when I can.
