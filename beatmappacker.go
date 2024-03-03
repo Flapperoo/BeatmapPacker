@@ -36,8 +36,8 @@ func main() {
 		for i := fromPack; i <= toPack; i++ {
 			fmt.Println("Processing beatmap pack " + strconv.Itoa(i))
 			url := ""
-			if i > 1299 {
-				if i > 1317 {
+			if i > 1299 || i == 124 {
+				if i > 1317 || i == 124 {
 					url = "https://packs.ppy.sh/S" + strconv.Itoa(i) + "%20-%20osu%21%20Beatmap%20Pack%20%23" + strconv.Itoa(i) + ".zip"
 				} else {
 					url = "https://packs.ppy.sh/S" + strconv.Itoa(i) + "20-%20Beatmap%20Pack%20%23" + strconv.Itoa(i) + ".zip"
