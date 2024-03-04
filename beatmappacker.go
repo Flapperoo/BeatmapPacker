@@ -74,6 +74,7 @@ func main() {
 			}
 			fmt.Println("Beatmap Pack " + strconv.Itoa(i) + " unpacked")
 		}
+		//Clean up temp files
 		fmt.Println("Cleaning up...")
 		os.Remove("temp.zip")
 		os.Remove("temp.7z")
