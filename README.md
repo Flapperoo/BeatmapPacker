@@ -6,8 +6,8 @@ Outputs into /BeatmapMegapack containing .osz files from the downloaded beatmap 
 
 ## How to use
 
-```go
-go run . <start> <end>
+```pwsh
+.\beatmappacker.exe <start> <end>
 ```
 
 Start: Beginning range of pack number to start downloading from.
@@ -16,8 +16,8 @@ End: End range of pack number to download.
 
 Example:
 
-```go
-go run . 1 1348
+```pwsh
+.\beatmappacker.exe 1 1348
 ```
 
 This will download beatmap packs from 1 - 1348.
