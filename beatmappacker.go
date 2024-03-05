@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 
 	"github.com/bodgit/sevenzip"
@@ -118,8 +119,17 @@ func unpackBeatPackZip(filepath string) (err error) {
 
 	// Unpack the file
 	for _, f := range file.File {
+
+		// Skip directories
+		if f.FileInfo().IsDir() {
+			continue
+		}
+
+		// Extract base file name
+		baseFileName := path.Base(f.Name)
+
 		// Create the file
-		dst, err := os.OpenFile("BeatmapMegapack/"+f.Name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+		dst, err := os.OpenFile(path.Join("BeatmapMegapack", baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return err
 		}
@@ -130,7 +140,6 @@ func unpackBeatPackZip(filepath string) (err error) {
 		if err != nil {
 			return err
 		}
-		defer fileShard.Close()
 
 		// Copy the file
 		_, err = io.Copy(dst, fileShard)
@@ -152,8 +161,17 @@ func unpackBeatPackSevenZip(filepath string) (err error) {
 
 	//Unpack the file
 	for _, f := range file.File {
+
+		// Skip directories
+		if f.FileInfo().IsDir() {
+			continue
+		}
+
+		// Extract base file name
+		baseFileName := path.Base(f.Name)
+
 		// Create the file
-		dst, err := os.OpenFile("BeatmapMegapack/"+f.Name, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+		dst, err := os.OpenFile(path.Join("BeatmapMegapack", baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return err
 		}
