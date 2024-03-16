@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -13,79 +14,76 @@ import (
 )
 
 func main() {
-	if len(os.Args) == 3 {
-		//Convert fromPack to int
-		fromPack, err := strconv.Atoi(os.Args[1])
-		if err != nil {
-			fmt.Printf("Invalid argument %v", os.Args[1])
-			return
-		}
-		// Convert toPack to int
-		toPack, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Printf("Invalid argument %v", os.Args[2])
-			return
-		}
-		// Check if fromPack is greater than toPack
-		if fromPack > toPack {
-			fmt.Println("Invalid arguments, Initial pack is greater than final pack")
-			return
-		}
-		// Create Beatmap folder
-		os.MkdirAll("BeatmapMegapack", os.ModePerm)
-		// Download the packs
-		for i := fromPack; i <= toPack; i++ {
-			fmt.Println("Processing beatmap pack " + strconv.Itoa(i))
-			url := ""
-			if i > 1299 || i == 124 {
-				if i > 1317 || i == 124 {
-					url = "https://packs.ppy.sh/S" + strconv.Itoa(i) + "%20-%20osu%21%20Beatmap%20Pack%20%23" + strconv.Itoa(i) + ".zip"
-				} else {
-					url = "https://packs.ppy.sh/S" + strconv.Itoa(i) + "20-%20Beatmap%20Pack%20%23" + strconv.Itoa(i) + ".zip"
-				}
-				err := downloadFile("temp.zip", url)
-				if err != nil {
-					fmt.Println("Error downloading beatmap pack " + strconv.Itoa(i))
-					fmt.Println("Does this link exist? " + url)
-					fmt.Println(err)
-					return
-				}
-				fmt.Println("Beatmap pack " + strconv.Itoa(i) + " downloaded")
-				err = unpackBeatPackZip("temp.zip")
-				if err != nil {
-					fmt.Println("Error unpacking pack " + strconv.Itoa(i))
-					fmt.Println(err)
-					return
-				}
-			} else {
-				url = "https://packs.ppy.sh/S" + strconv.Itoa(i) + "%20-%20Beatmap%20Pack%20%23" + strconv.Itoa(i) + ".7z"
-				err := downloadFile("temp.7z", url)
-				if err != nil {
-					fmt.Println("Error downloading beatmap pack " + strconv.Itoa(i))
-					fmt.Println("Does this link exist? " + url)
-					return
-				}
-				fmt.Println("Beatmap pack " + strconv.Itoa(i) + " downloaded")
-				err = unpackBeatPackSevenZip("temp.7z")
-				if err != nil {
-					fmt.Println("Error unpacking pack " + strconv.Itoa(i))
-					fmt.Println(err)
-					return
-				}
-			}
-			fmt.Println("Beatmap Pack " + strconv.Itoa(i) + " unpacked")
-		}
-		//Clean up temp files
-		fmt.Println("Cleaning up...")
-		os.Remove("temp.zip")
-		os.Remove("temp.7z")
-		fmt.Println("Beatmap Megapack finished")
-	} else {
-		fmt.Println("Invalid arguments")
+	// Check if arguments are valid
+	if len(os.Args) != 3 {
+		log.Fatal("Invalid number of arguments, expected 2")
 	}
+	//Convert fromPack to int
+	fromPack, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		log.Fatalf("Invalid argument %v", os.Args[1])
+	}
+
+	// Convert toPack to int
+	toPack, err := strconv.Atoi(os.Args[2])
+	if err != nil {
+		log.Fatalf("Invalid argument %v", os.Args[2])
+	}
+
+	// Check if fromPack is greater than toPack
+	if fromPack > toPack {
+		log.Fatal("Invalid arguments, Initial pack number is greater than final pack number")
+	}
+
+	// Create Beatmap folder
+	err = os.MkdirAll("BeatmapMegapack", os.ModePerm)
+	if err != nil {
+		log.Fatalf("Error creating megapack directory: %v", err)
+	}
+
+	// Download & unpack beatmap packs
+	for i := fromPack; i <= toPack; i++ {
+		fmt.Printf("Downloading beatmap pack #%d\n", i)
+
+		var url, tempFile string
+		var unpackFunc func(string) error
+
+		if i > 1299 || i == 124 { // TODO: Get edge case pack numbers from an external file instead of hardcoding them
+			if i > 1317 || i == 124 {
+				url = fmt.Sprintf("https://packs.ppy.sh/S%d%%20-%%20osu%%21%%20Beatmap%%20Pack%%20%%23%d.zip", i, i)
+			} else {
+				url = fmt.Sprintf("https://packs.ppy.sh/S%d20-%%20Beatmap%%20Pack%%20%%23%d.zip", i, i)
+			}
+			tempFile = "temp.zip"
+			unpackFunc = unzipZip
+		} else {
+			url = fmt.Sprintf("https://packs.ppy.sh/S%d%%20-%%20Beatmap%%20Pack%%20%%23%d.7z", i, i)
+			tempFile = "temp.7z"
+			unpackFunc = unzipSevenZip
+		}
+
+		// Download the file
+		err = download(tempFile, url)
+		if err != nil {
+			logAndCleanUp(fmt.Sprintf("Error downloading beatmap pack #%d", i), err)
+			return
+		}
+
+		// Unpack the file
+		err = unpackFunc(tempFile)
+		if err != nil {
+			logAndCleanUp(fmt.Sprintf("Error unpacking beatmap pack #%d", i), err)
+			return
+		}
+
+		fmt.Printf("Beatmap Pack #%d unpacked\n", i)
+	}
+
+	//Clean up temp files
+	logAndCleanUp("Beatmap unpacking finished, files are located in /BeatmapMegapack", nil)
 }
 
-func downloadFile(filepath string, url string) (err error) {
+func download(filepath string, url string) (err error) {
 	// Create the file
 	out, err := os.Create(filepath)
 	if err != nil {
@@ -109,7 +107,7 @@ func downloadFile(filepath string, url string) (err error) {
 	return nil
 }
 
-func unpackBeatPackZip(filepath string) (err error) {
+func unzipZip(filepath string) (err error) {
 	// Open the zip file
 	file, err := zip.OpenReader(filepath)
 	if err != nil {
@@ -140,6 +138,7 @@ func unpackBeatPackZip(filepath string) (err error) {
 		if err != nil {
 			return err
 		}
+		defer fileShard.Close()
 
 		// Copy the file
 		_, err = io.Copy(dst, fileShard)
@@ -151,7 +150,7 @@ func unpackBeatPackZip(filepath string) (err error) {
 	return nil
 }
 
-func unpackBeatPackSevenZip(filepath string) (err error) {
+func unzipSevenZip(filepath string) (err error) {
 	// Open the 7z file
 	file, err := sevenzip.OpenReader(filepath)
 	if err != nil {
@@ -177,18 +176,36 @@ func unpackBeatPackSevenZip(filepath string) (err error) {
 		}
 		defer dst.Close()
 
-		// Open the file
-		fileShard, err := f.Open()
-		if err != nil {
-			return err
-		}
-
-		// Copy the file
-		_, err = io.Copy(dst, fileShard)
+		// Open and Copy the file
+		err = processSevenZipFile(f, dst)
 		if err != nil {
 			return err
 		}
 	}
 
 	return nil
+}
+
+func processSevenZipFile(file *sevenzip.File, dst *os.File) (err error) {
+	fileShard, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer fileShard.Close()
+
+	// Copy the file
+	_, err = io.Copy(dst, fileShard)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+func logAndCleanUp(message string, err error) {
+	fmt.Println(message)
+	if err != nil {
+		fmt.Println(err)
+	}
+	os.Remove("temp.zip")
+	os.Remove("temp.7z")
 }
