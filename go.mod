@@ -1,6 +1,6 @@
 module github.com/flapperoo/beatmappacker
 
-go 1.22
+go 1.22.3
 
 require github.com/bodgit/sevenzip v1.5.0
 
