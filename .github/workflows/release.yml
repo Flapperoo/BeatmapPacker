@@ -1,0 +1,41 @@
+name: release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  release-please:
+    name: release-please
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4.1.1
+        id: release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-type: "go"
+      
+      - uses: actions/checkout@v4.1.6
+        if: ${{ steps.release.outputs.releases_created }}
+      
+      - uses: actions/setup-go@v5.0.1
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          go-version: '1.22.3'
+      
+      - run: |
+          mkdir -p dist
+          GOOS=linux GOARCH=amd64 go build -o dist/beatmappacker-linux .
+          GOOS=windows GOARCH=amd64 go build -o dist/beatmappacker-windows.exe .
+        if: ${{ steps.release.outputs.releases_created }}
+      
+      - uses: svenstaro/upload-release-action@2.9.0
+        if: ${{ steps.release.outputs.releases_created }}
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ steps.release.outputs.tag_name }}
+            
