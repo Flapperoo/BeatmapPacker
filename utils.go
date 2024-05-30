@@ -57,7 +57,7 @@ func download(filepath string, url string) (err error) {
 	return nil
 }
 
-func unzipZip(filepath string) (err error) {
+func unzipZip(filepath string, packPath string) (err error) {
 	// Open the zip file
 	file, err := zip.OpenReader(filepath)
 	if err != nil {
@@ -77,7 +77,7 @@ func unzipZip(filepath string) (err error) {
 		baseFileName := path.Base(f.Name)
 
 		// Create the file
-		dst, err := os.OpenFile(path.Join("BeatmapMegapack", baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+		dst, err := os.OpenFile(path.Join(packPath, baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return err
 		}
@@ -100,7 +100,7 @@ func unzipZip(filepath string) (err error) {
 	return nil
 }
 
-func unzipSevenZip(filepath string) (err error) {
+func unzipSevenZip(filepath string, packPath string) (err error) {
 	// Open the 7z file
 	file, err := sevenzip.OpenReader(filepath)
 	if err != nil {
@@ -120,7 +120,7 @@ func unzipSevenZip(filepath string) (err error) {
 		baseFileName := path.Base(f.Name)
 
 		// Create the file
-		dst, err := os.OpenFile(path.Join("BeatmapMegapack", baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
+		dst, err := os.OpenFile(path.Join(packPath, baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return err
 		}

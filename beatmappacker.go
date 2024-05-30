@@ -9,8 +9,8 @@ import (
 
 func main() {
 	// Check if arguments are valid
-	if len(os.Args) != 3 {
-		log.Fatal("Invalid number of arguments, expected 2")
+	if len(os.Args) != 4 {
+		log.Fatal("Invalid number of arguments, expected 3")
 	}
 
 	fromPack, err := strconv.ParseUint(os.Args[1], 10, 64)
@@ -28,7 +28,8 @@ func main() {
 	}
 
 	// Create Beatmap folder
-	err = os.MkdirAll("BeatmapMegapack", os.ModePerm)
+	packPath := os.Args[3]
+	err = os.MkdirAll(packPath, os.ModePerm)
 	if err != nil {
 		log.Fatalf("Error creating megapack directory: %v", err)
 	}
@@ -45,7 +46,7 @@ func main() {
 		})
 
 		var url, tempFile string
-		var unpackFunc func(string) error
+		var unpackFunc func(string, string) error
 
 		switch {
 		case i > 1299 || i == 124:
@@ -92,7 +93,7 @@ func main() {
 			PackNum: i,
 			Action:  "Unpacking",
 		})
-		err = unpackFunc(tempFile)
+		err = unpackFunc(tempFile, packPath)
 		if err != nil {
 			bpLogger(logOptions{
 				Level:   "error",
