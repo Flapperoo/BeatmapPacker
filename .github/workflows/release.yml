@@ -41,5 +41,6 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           tag: ${{ steps.release.outputs.tag_name }}
+          file_glob: true
         if: ${{ steps.release.outputs.release_created }}
             
