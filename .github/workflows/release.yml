@@ -32,8 +32,8 @@ jobs:
       
       - run: |
           mkdir -p dist
-          GOOS=linux GOARCH=amd64 go build -o dist/beatmappacker-linux .
-          GOOS=windows GOARCH=amd64 go build -o dist/beatmappacker-windows.exe .
+          GOOS=linux GOARCH=amd64 go build -o dist/beatmappacker-linux ./cmd/...
+          GOOS=windows GOARCH=amd64 go build -o dist/beatmappacker-windows.exe ./cmd/...
         if: ${{ steps.release.outputs.release_created }}
       
       - uses: svenstaro/upload-release-action@2.9.0
