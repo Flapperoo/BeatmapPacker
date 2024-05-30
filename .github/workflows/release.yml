@@ -30,11 +30,11 @@ jobs:
           go-version: '1.22.3'
         if: ${{ steps.release.outputs.release_created }}
       
-      - run: |
+      - if: ${{ steps.release.outputs.releases_created }}
+        run: |
           mkdir -p dist
           GOOS=linux GOARCH=amd64 go build -o dist/beatmappacker-linux .
-          GOOS=windows GOARCH=amd64 go build -o dist/beatmappacker-windows.exe .
-        if: ${{ steps.release.outputs.releases_created }}
+          GOOS=windows GOARCH=amd64 go build -o dist/beatmappacker-windows.exe .        
       
       - uses: svenstaro/upload-release-action@2.9.0
         with:
