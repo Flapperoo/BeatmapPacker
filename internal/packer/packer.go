@@ -11,7 +11,6 @@ import (
 )
 
 func PackerProcess(a args.BpArgs) error {
-
 	err := os.MkdirAll(a.PackPath, os.ModePerm)
 	if err != nil {
 		err = errors.New("failed to create directory")
@@ -26,6 +25,7 @@ func PackerProcess(a args.BpArgs) error {
 			PackNum: i,
 			Action:  "Processing",
 		})
+
 		var url, tempFile string
 		var unpackFunc func(string, string) error
 
@@ -43,7 +43,6 @@ func PackerProcess(a args.BpArgs) error {
 			tempFile = "temp.7z"
 			unpackFunc = utils.UnzipSevenZip
 		}
-
 		// Download the file
 		logging.BpLogger(logging.BpLog{
 			Level:   "info",
@@ -67,7 +66,6 @@ func PackerProcess(a args.BpArgs) error {
 			utils.CleanUp()
 			continue
 		}
-
 		// Unpack the file
 		logging.BpLogger(logging.BpLog{
 			Level:   "info",
@@ -99,14 +97,12 @@ func PackerProcess(a args.BpArgs) error {
 		})
 		utils.CleanUp()
 	}
-
 	// Print failed packs
 	if len(failedPacks) > 0 {
 		fmt.Println("[BeatmapPacker] Failed to process the following packs: ")
 		for pack := range failedPacks {
 			fmt.Printf("#%d ", pack)
 		}
-
 	}
 
 	return nil

@@ -16,15 +16,15 @@ func Download(filepath string, url string) (err error) {
 	if err != nil {
 		return err
 	}
-	defer out.Close()
 
+	defer out.Close()
 	// Get the data
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
 
+	defer resp.Body.Close()
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
@@ -40,33 +40,30 @@ func UnzipZip(filepath string, packPath string) (err error) {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
+	defer file.Close()
 	// Unpack the file
 	for _, f := range file.File {
-
 		// Skip directories
 		if f.FileInfo().IsDir() {
 			continue
 		}
-
 		// Extract base file name
 		baseFileName := path.Base(f.Name)
-
 		// Create the file
 		dst, err := os.OpenFile(path.Join(packPath, baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return err
 		}
-		defer dst.Close()
 
+		defer dst.Close()
 		// Open the file
 		fileShard, err := f.Open()
 		if err != nil {
 			return err
 		}
-		defer fileShard.Close()
 
+		defer fileShard.Close()
 		// Copy the file
 		_, err = io.Copy(dst, fileShard)
 		if err != nil {
@@ -83,26 +80,23 @@ func UnzipSevenZip(filepath string, packPath string) (err error) {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
+	defer file.Close()
 	//Unpack the file
 	for _, f := range file.File {
-
 		// Skip directories
 		if f.FileInfo().IsDir() {
 			continue
 		}
-
 		// Extract base file name
 		baseFileName := path.Base(f.Name)
-
 		// Create the file
 		dst, err := os.OpenFile(path.Join(packPath, baseFileName), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, os.ModePerm)
 		if err != nil {
 			return err
 		}
-		defer dst.Close()
 
+		defer dst.Close()
 		// Open and Copy the file
 		err = processSevenZipFile(f, dst)
 		if err != nil {
@@ -123,8 +117,8 @@ func processSevenZipFile(file *sevenzip.File, dst *os.File) (err error) {
 	if err != nil {
 		return err
 	}
-	defer fileShard.Close()
 
+	defer fileShard.Close()
 	// Copy the file
 	_, err = io.Copy(dst, fileShard)
 	if err != nil {

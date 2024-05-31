@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Arguments invalid: %v", err)
 	}
-
+	// Main Process
 	err = packer.PackerProcess(a)
 	if err != nil {
 		log.Fatalf("Packer failed: %v", err)
