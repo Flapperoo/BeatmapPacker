@@ -13,7 +13,6 @@ type BpArgs struct {
 }
 
 func SetArgs(rawArgs []string) (a BpArgs, err error) {
-
 	if len(rawArgs) != 4 {
 		err = errors.New("incorrect number of arguments")
 		return BpArgs{}, err
