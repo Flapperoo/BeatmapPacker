@@ -35,7 +35,7 @@ func PackerProcess(a args.BpArgs) error {
 			if i > 1317 || i == 124 {
 				url = fmt.Sprintf("https://packs.ppy.sh/S%d%%20-%%20osu%%21%%20Beatmap%%20Pack%%20%%23%d.zip", i, i)
 			} else {
-				url = fmt.Sprintf("https://packs.ppy.sh/S%d20-%%20Beatmap%%20Pack%%20%%23%d.zip", i, i)
+				url = fmt.Sprintf("https://packs.ppy.sh/S%d%%20-%%20Beatmap%%20Pack%%20%%23%d.zip", i, i)
 			}
 			tempFile = "temp.zip"
 			unpackFunc = utils.UnzipZip
@@ -101,7 +101,7 @@ func PackerProcess(a args.BpArgs) error {
 	// Print failed packs
 	if len(failedPacks) > 0 {
 		fmt.Println("[BeatmapPacker] Failed to process the following packs: ")
-		for pack := range failedPacks {
+		for _, pack := range failedPacks {
 			fmt.Printf("#%d ", pack)
 		}
 	}
