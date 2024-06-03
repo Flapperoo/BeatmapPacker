@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.1](https://github.com/Flapperoo/BeatmapPacker/compare/v1.1.0...v1.1.1) (2024-06-03)
+
+
+### Bug Fixes
+
+* Assign path to args ([#5](https://github.com/Flapperoo/BeatmapPacker/issues/5)) ([80fbdc1](https://github.com/Flapperoo/BeatmapPacker/commit/80fbdc1545d53c6e0effeb695ff26b5ca165ebdd))
+* Broken pack links `1300` - `1317` ([#7](https://github.com/Flapperoo/BeatmapPacker/issues/7)) ([6959e9b](https://github.com/Flapperoo/BeatmapPacker/commit/6959e9b356182cb33b21e1d1d0c8e4176f0abc45))
+* Output formatting ([#8](https://github.com/Flapperoo/BeatmapPacker/issues/8)) ([d5f0a0c](https://github.com/Flapperoo/BeatmapPacker/commit/d5f0a0c491d7b128dba30b6b9f74af53c42c2cfe))
+
 ## [1.1.0](https://github.com/Flapperoo/BeatmapPacker/compare/v1.0.0...v1.1.0) (2024-05-30)
 
 
