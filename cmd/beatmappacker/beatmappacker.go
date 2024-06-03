@@ -21,5 +21,5 @@ func main() {
 		log.Fatalf("Packer failed: %v", err)
 	}
 
-	fmt.Println("[BeatmapPacker] Beatmaps repacked!")
+	fmt.Print("[BeatmapPacker] Beatmaps repacked!")
 }
