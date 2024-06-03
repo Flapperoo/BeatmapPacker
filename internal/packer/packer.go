@@ -13,7 +13,8 @@ import (
 func PackerProcess(a args.BpArgs) error {
 	err := os.MkdirAll(a.PackPath, os.ModePerm)
 	if err != nil {
-		err = errors.New("failed to create directory")
+		mkdirErr := errors.New("directory invalid")
+		err = errors.Join(mkdirErr, err)
 		return err
 	}
 
