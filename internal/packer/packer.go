@@ -102,7 +102,7 @@ func PackerProcess(a args.BpArgs) error {
 	if len(failedPacks) > 0 {
 		fmt.Println("[BeatmapPacker] Failed to process the following packs: ")
 		for _, pack := range failedPacks {
-			fmt.Printf("#%d ", pack)
+			fmt.Printf("\n#%d ", pack)
 		}
 	}
 
