@@ -35,7 +35,8 @@ func SetArgs(rawArgs []string) (a BpArgs, err error) {
 		return BpArgs{}, err
 	}
 
-	if rawArgs[3] == "" {
+	a.PackPath = rawArgs[3]
+	if a.PackPath == "" {
 		err := errors.New("no path provided")
 		return BpArgs{}, err
 	}
