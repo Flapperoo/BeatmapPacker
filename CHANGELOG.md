@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/Flapperoo/BeatmapPacker/compare/v1.1.1...v1.1.2) (2024-06-23)
+
+
+### Bug Fixes
+
+* Error log formatting ([ae78a0e](https://github.com/Flapperoo/BeatmapPacker/commit/ae78a0e9ddd5ba102282747a95a83814f183d638))
+* **logging:** Error log formatting ([#11](https://github.com/Flapperoo/BeatmapPacker/issues/11)) ([75b32e7](https://github.com/Flapperoo/BeatmapPacker/commit/75b32e738b81efc32e2daab52fd09c69552d1b68))
+
 ## [1.1.1](https://github.com/Flapperoo/BeatmapPacker/compare/v1.1.0...v1.1.1) (2024-06-03)
 
 
