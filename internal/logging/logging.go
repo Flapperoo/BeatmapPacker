@@ -4,7 +4,7 @@ import "github.com/fatih/color"
 
 type BpLog struct {
 	Level   string
-	PackNum uint64
+	PackNum uint16
 	Action  string
 	Err     error
 }
