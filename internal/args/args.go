@@ -7,8 +7,8 @@ import (
 )
 
 type BpArgs struct {
-	FromPack uint64
-	ToPack   uint64
+	FromPack uint16
+	ToPack   uint16
 	PackPath string
 }
 
@@ -18,17 +18,19 @@ func SetArgs(rawArgs []string) (a BpArgs, err error) {
 		return BpArgs{}, err
 	}
 
-	a.FromPack, err = strconv.ParseUint(rawArgs[1], 10, 64)
+	fromPack, err := strconv.ParseUint(rawArgs[1], 10, 64)
 	if err != nil {
 		err = fmt.Errorf("%v argument not a number", rawArgs[1])
 		return BpArgs{}, err
 	}
+	a.FromPack = uint16(fromPack)
 
-	a.ToPack, err = strconv.ParseUint(rawArgs[2], 10, 64)
+	toPack, err := strconv.ParseUint(rawArgs[2], 10, 64)
 	if err != nil {
 		err := fmt.Errorf("%v argument not a number", rawArgs[2])
 		return BpArgs{}, err
 	}
+	a.ToPack = uint16(toPack)
 
 	if a.FromPack > a.ToPack {
 		err := errors.New("initial pack number is greater than final pack number")

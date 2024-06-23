@@ -10,7 +10,7 @@ import (
 	"github.com/flapperoo/beatmappacker/internal/utils"
 )
 
-func PackerProcess(a args.BpArgs) error {
+func Run(a args.BpArgs) error {
 	err := os.MkdirAll(a.PackPath, os.ModePerm)
 	if err != nil {
 		mkdirErr := errors.New("directory invalid")
@@ -18,7 +18,7 @@ func PackerProcess(a args.BpArgs) error {
 		return err
 	}
 
-	failedPacks := []uint64{}
+	failedPacks := []uint16{}
 
 	for i := a.FromPack; i <= a.ToPack; i++ {
 		logging.BpLogger(logging.BpLog{
@@ -26,10 +26,7 @@ func PackerProcess(a args.BpArgs) error {
 			PackNum: i,
 			Action:  "Processing",
 		})
-
-		var url, tempFile string
-		var unpackFunc func(string, string) error
-
+		var url string
 		switch {
 		case i > 1299 || i == 124:
 			if i > 1317 || i == 124 {
@@ -37,58 +34,40 @@ func PackerProcess(a args.BpArgs) error {
 			} else {
 				url = fmt.Sprintf("https://packs.ppy.sh/S%d%%20-%%20Beatmap%%20Pack%%20%%23%d.zip", i, i)
 			}
-			tempFile = "temp.zip"
-			unpackFunc = utils.UnzipZip
+			err := utils.ExtractZip(a.PackPath, url, i)
+			if err != nil {
+				logging.BpLogger(logging.BpLog{
+					Level:   "error",
+					PackNum: i,
+					Action:  "Processing",
+					Err:     err,
+				})
+				logging.BpLogger(logging.BpLog{
+					Level:   "infons",
+					PackNum: i,
+					Action:  "Skipping",
+				})
+				failedPacks = append(failedPacks, i)
+				continue
+			}
 		default:
 			url = fmt.Sprintf("https://packs.ppy.sh/S%d%%20-%%20Beatmap%%20Pack%%20%%23%d.7z", i, i)
-			tempFile = "temp.7z"
-			unpackFunc = utils.UnzipSevenZip
-		}
-		// Download the file
-		logging.BpLogger(logging.BpLog{
-			Level:   "info",
-			PackNum: i,
-			Action:  "Downloading",
-		})
-		err := utils.Download(tempFile, url)
-		if err != nil {
-			logging.BpLogger(logging.BpLog{
-				Level:   "error",
-				PackNum: i,
-				Action:  "Downloading",
-				Err:     err,
-			})
-			logging.BpLogger(logging.BpLog{
-				Level:   "infons",
-				PackNum: i,
-				Action:  "Skipping",
-			})
-			failedPacks = append(failedPacks, i)
-			utils.CleanUp()
-			continue
-		}
-		// Unpack the file
-		logging.BpLogger(logging.BpLog{
-			Level:   "info",
-			PackNum: i,
-			Action:  "Unpacking",
-		})
-		err = unpackFunc(tempFile, a.PackPath)
-		if err != nil {
-			logging.BpLogger(logging.BpLog{
-				Level:   "error",
-				PackNum: i,
-				Action:  "Unpacking",
-				Err:     err,
-			})
-			logging.BpLogger(logging.BpLog{
-				Level:   "infons",
-				PackNum: i,
-				Action:  "Skipping",
-			})
-			failedPacks = append(failedPacks, i)
-			utils.CleanUp()
-			continue
+			err := utils.ExtractSevenZip(a.PackPath, url, i)
+			if err != nil {
+				logging.BpLogger(logging.BpLog{
+					Level:   "error",
+					PackNum: i,
+					Action:  "Processing",
+					Err:     err,
+				})
+				logging.BpLogger(logging.BpLog{
+					Level:   "infons",
+					PackNum: i,
+					Action:  "Skipping",
+				})
+				failedPacks = append(failedPacks, i)
+				continue
+			}
 		}
 
 		logging.BpLogger(logging.BpLog{
@@ -96,11 +75,10 @@ func PackerProcess(a args.BpArgs) error {
 			PackNum: i,
 			Action:  "Finished",
 		})
-		utils.CleanUp()
 	}
 	// Print failed packs
 	if len(failedPacks) > 0 {
-		fmt.Println("[BeatmapPacker] Failed to process the following packs: ")
+		fmt.Print("[BeatmapPacker] Failed to process the following packs: ")
 		for _, pack := range failedPacks {
 			fmt.Printf("\n#%d ", pack)
 		}
