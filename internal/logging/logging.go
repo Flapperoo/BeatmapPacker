@@ -20,6 +20,6 @@ func BpLogger(log BpLog) {
 	case "error":
 		w.Printf("\n[BeatmapPacker] ")
 		r.Print("(Error) ")
-		w.Printf("%v Beatmap Pack #%d\n %v\n", log.Action, log.PackNum, log.Err)
+		w.Printf("%v Beatmap Pack #%d:\n %v\n", log.Action, log.PackNum, log.Err)
 	}
 }
